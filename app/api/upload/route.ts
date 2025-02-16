@@ -1,7 +1,6 @@
 import { BlobServiceClient } from "@azure/storage-blob";
 import { NextResponse } from "next/server";
 
-console.log(process.env.AZURE_STORAGE_CONNECTION_STRING);
 const blobServiceClient = BlobServiceClient.fromConnectionString(
   process.env.AZURE_STORAGE_CONNECTION_STRING || ""
 );
@@ -30,25 +29,20 @@ export async function POST(request: Request) {
 
     // Blob 클라이언트 생성
     const blockBlobClient = containerClient.getBlockBlobClient(fileName);
-    console.log("blockBlobClient", blockBlobClient);
     // 파일을 버퍼로 변환
     const buffer = await file.arrayBuffer();
 
     // Blob Storage에 업로드
-    const uploadResponse = await blockBlobClient.uploadData(buffer, {
+    await blockBlobClient.uploadData(buffer, {
       blobHTTPHeaders: {
         blobContentType: file.type,
       },
     });
 
-    console.log("uploadResponse", uploadResponse);
-
     // 24시간 후 만료 시간을 메타데이터로 설정
-    const setMetadataResponse = await blockBlobClient.setMetadata({
+    await blockBlobClient.setMetadata({
       expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
     });
-
-    console.log("setMetadataResponse", setMetadataResponse);
 
     return NextResponse.json({
       imageUrl: blockBlobClient.url,
