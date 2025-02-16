@@ -7,13 +7,17 @@ import { useDropzone } from "react-dropzone";
 import { toast } from "sonner";
 import { useImageUploadPost } from "@/query/useImageUploadPost";
 import { useImageDelete } from "@/query/useImageDelete";
+import { useImageAnalysisPost } from "@/query/useImageAnalysisPost";
+import { usePredictionStore } from "@/store/prediction";
 
 function Upload() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const { setPredictions, setIsLoading } = usePredictionStore();
 
   const uploadMutation = useImageUploadPost();
   const deleteMutation = useImageDelete();
+  const analysisMutation = useImageAnalysisPost();
 
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
@@ -50,10 +54,33 @@ function Upload() {
       deleteMutation.mutate(previewUrl, {
         onSuccess: () => {
           setPreviewUrl(null);
+          usePredictionStore.getState().reset();
           toast.success("이미지가 삭제되었습니다.");
         },
       });
     }
+  };
+
+  const onSubmit = async () => {
+    if (!previewUrl) {
+      toast.error("먼저 이미지를 업로드해주세요.");
+      return;
+    }
+
+    setIsLoading(true);
+    analysisMutation.mutate(previewUrl, {
+      onSuccess: (data) => {
+        setPredictions(data);
+        toast.success("이미지 분석이 완료되었습니다.");
+      },
+      onError: (error) => {
+        console.error("이미지 분석 중 오류 발생:", error);
+        toast.error("이미지 분석에 실패했습니다.");
+      },
+      onSettled: () => {
+        setIsLoading(false);
+      },
+    });
   };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -79,7 +106,9 @@ function Upload() {
             />
           </div>
           <div className="flex gap-4 mt-4">
-            <Button>판별하기</Button>
+            <Button onClick={onSubmit} disabled={analysisMutation.isPending}>
+              {analysisMutation.isPending ? "분석 중..." : "판별하기"}
+            </Button>
             <Button variant="outline" onClick={handleReupload}>
               취소
             </Button>

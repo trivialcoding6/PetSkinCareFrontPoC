@@ -8,21 +8,32 @@ import {
   LabelList,
 } from "recharts";
 
-const data = [
-  { name: "기미/잡티", percentage: 15 },
-  { name: "각질", percentage: 30 },
-  { name: "민감성", percentage: 45 },
-  { name: "건조", percentage: 77 },
-];
+interface ChartProps {
+  predictions: Record<string, number>;
+}
 
-function Chart() {
+function Chart({ predictions }: ChartProps) {
+  const data = Object.entries(predictions).map(([name, percentage]) => ({
+    name,
+    percentage,
+  }));
+
   return (
     <div className="p-4">
       <h2 className="text-lg font-semibold mb-4">분석 결과</h2>
       <ResponsiveContainer width="100%" height={200}>
-        <BarChart data={data} layout="vertical">
+        <BarChart
+          data={data}
+          layout="vertical"
+          margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+        >
           <XAxis type="number" hide />
-          <YAxis type="category" dataKey="name" width={80} />
+          <YAxis
+            type="category"
+            dataKey="name"
+            width={120}
+            tick={{ fontSize: 12 }}
+          />
           <Tooltip />
           <Bar dataKey="percentage" fill="#6366F1" barSize={20}>
             {/* 퍼센트 값 표시 */}
@@ -31,7 +42,7 @@ function Chart() {
               position="right"
               fill="#333"
               fontSize={12}
-              formatter={(value: number) => `${value}%`}
+              formatter={(value: number) => `${value.toFixed(2)}%`}
             />
           </Bar>
         </BarChart>
