@@ -1,15 +1,24 @@
 import Header from "@/components/service/Header";
-import RecommendSection from "@/components/service/RecommendSection";
-import ResultSection from "@/components/service/ResultSection";
-import UploadSection from "@/components/service/UploadSection";
+import Loading from "@/components/service/Loading";
+import RecommendSection from "@/components/service/recommend/RecommendSection";
+import ResultSection from "@/components/service/result/ResultSection";
+import UploadSection from "@/components/service/upload/UploadSection";
+
+const loading = true;
 
 function UploadPage() {
   return (
     <div className="space-y-10">
       <Header />
       <UploadSection />
-      <ResultSection />
-      <RecommendSection />
+      {loading ? (
+        <Loading />
+      ) : (
+        <>
+          <ResultSection />
+          <RecommendSection />
+        </>
+      )}
     </div>
   );
 }

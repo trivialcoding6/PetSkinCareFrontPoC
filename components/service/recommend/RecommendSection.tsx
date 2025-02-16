@@ -1,7 +1,9 @@
 "use client";
 
-import Section from "./Section";
+import { Button } from "../../ui/button";
+import Section from "../Section";
 import { MapPin, Phone, ShieldCheck } from "lucide-react";
+import Recommend from "./Recommend";
 
 const hospitals = [
   {
@@ -31,8 +33,7 @@ export default function RecommendationSection() {
   return (
     <Section className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-white">
       {/* 주변 동물병원 추천 */}
-      <div className="p-4">
-        <h2 className="text-lg font-semibold mb-4">주변 동물병원</h2>
+      <Recommend title="주변 동물병원">
         <ul className="space-y-4">
           {hospitals.map((hospital, index) => (
             <li key={index} className="p-4 border rounded-lg shadow-sm">
@@ -45,17 +46,16 @@ export default function RecommendationSection() {
                 <Phone className="w-4 h-4 text-green-500" />
                 {hospital.phone}
               </p>
-              <button className="mt-2 px-4 py-1 bg-blue-500 text-white rounded-md text-sm">
+              <Button className="mt-2 px-4 py-1 bg-blue-500 text-white rounded-md text-sm">
                 지도 보러가기
-              </button>
+              </Button>
             </li>
           ))}
         </ul>
-      </div>
+      </Recommend>
 
       {/* 반려동물 보험 추천 */}
-      <div className="p-4">
-        <h2 className="text-lg font-semibold mb-4">반려동물 보험</h2>
+      <Recommend title="반려동물 보험">
         <ul className="space-y-4">
           {insurances.map((insurance, index) => (
             <li key={index} className="p-4 border rounded-lg shadow-sm">
@@ -68,13 +68,13 @@ export default function RecommendationSection() {
                   <li key={idx}>- {benefit}</li>
                 ))}
               </ul>
-              <button className="mt-3 px-4 py-1 bg-indigo-500 text-white rounded-md text-sm">
+              <Button className="mt-3 px-4 py-1 bg-indigo-500 text-white rounded-md text-sm">
                 상담 신청
-              </button>
+              </Button>
             </li>
           ))}
         </ul>
-      </div>
+      </Recommend>
     </Section>
   );
 }
