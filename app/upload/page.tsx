@@ -4,7 +4,7 @@ import RecommendSection from "@/components/service/recommend/RecommendSection";
 import ResultSection from "@/components/service/result/ResultSection";
 import UploadSection from "@/components/service/upload/UploadSection";
 
-const loading = true;
+const loading = false;
 
 function UploadPage() {
   return (
